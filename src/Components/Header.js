@@ -9,12 +9,12 @@ function Header() {
           <Navbar.Brand href="#home">
             <img
               alt=""
-              src="/img/logo.svg"
-              width="30"
-              height="30"
+              src="https://i.postimg.cc/Y9cHXbF8/icon.gif"
+              width="40"
+              height="40"
               className="d-inline-block align-top"
             />{' '}
-            React Bootstrap
+            <b>EmpCorner</b>
           </Navbar.Brand>
         </Container>
       </Navbar>
