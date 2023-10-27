@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
 import { adminLoginApi } from '../services/allApis';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -56,14 +58,27 @@ function Login() {
             alert("all inputs are required")
         }
         else {
+            // const{data}=await adminLoginApi(loginInputs)
+            // console.log(data);
             const result = await adminLoginApi(loginInputs)
             if (result.status >= 200 && result.status < 300) {
                 
-                alert(result.data)
+                // alert(result.data)
                 navigate('/adhome')
             }
             else {
-                alert(result.response.data)
+                // alert(result.response.data)
+                // console.log(result);
+                toast.error(result.response.data, {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    });
             }
 
 
@@ -97,7 +112,7 @@ function Login() {
                                         <div ><p className='text-danger'>*Invalid password !</p></div>}
                                     <div className='d-flex justify-content-center'>
 
-                                        <Button onClick={handleSubmit} variant="primary" type="submit">
+                                        <Button onClick={handleSubmit} variant="primary" type="button">
                                             Submit
                                         </Button>
 
@@ -116,6 +131,8 @@ function Login() {
                 </Row>
 
             </Container>
+            <ToastContainer />
+            
 
         </div>
     )
