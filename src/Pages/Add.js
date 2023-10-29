@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { addEmployee } from '../services/allApis';
 
 
 function Add() {
@@ -100,7 +101,7 @@ function Add() {
     }
   }, [image])
   // console.log(inputs);
-  const HandleAdd = (e) => {
+  const HandleAdd = async (e) => {
     e.preventDefault()
     // alert('button clicked')
     const { fname, lname, gender, status, email, location, mobile } = inputs
@@ -129,11 +130,27 @@ function Add() {
     else if (image == "") {
       toast.error('please choose image file')
     }
-    else{
-      toast.success('all set')
-      //header
-      //body
+    else {
+      // toast.success('all set')
+      //header(the body data contain file type content)
+      const headerConfig = {
+        "Content-Type": "multipart/form-data"
+      }
+      //body data as formData because it contain file type content
+      const data = new FormData()
+      //append  fname, lname, status, mobile, location, gender, email, profile
+      data.append("fname",fname)
+      data.append("lname",lname)
+      data.append("status",status)
+      data.append("mobile",mobile)
+      data.append("location",location)
+      data.append("gender",gender)
+      data.append("email",email)
+      data.append("user_profile",image)
       //api
+
+      const result = await addEmployee(data,headerConfig)
+      console.log(result);
     }
 
   }
