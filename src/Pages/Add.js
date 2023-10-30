@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addEmployee } from '../services/allApis';
+import { useNavigate } from 'react-router-dom';
+import Alert from 'react-bootstrap/Alert';
+import { registerContext } from '../Components/ContextShare';
 
 
 function Add() {
+
+  // access context
+  const { registerUpdate, setRegisterUpdate } = useContext(registerContext)
+  // console.log(registerUpdate);
   //state for validations
   const [fnameValid, setfnameValid] = useState(true)
   const [emailValid, setEmailValid] = useState(true)
@@ -12,6 +19,12 @@ function Add() {
   const [lnameValid, setlnameValid] = useState(true)
   const [mobileValid, setmobileValid] = useState(true)
   const [locationValid, setlocationValid] = useState(true)
+
+  const navigate = useNavigate()
+  //state to hold error message from backend
+  const [errorMsg, setErrorMsg] = useState("")
+
+
   // state to hold form inputs
   const [inputs, setInputs] = useState({
     fname: "",
@@ -139,23 +152,59 @@ function Add() {
       //body data as formData because it contain file type content
       const data = new FormData()
       //append  fname, lname, status, mobile, location, gender, email, profile
-      data.append("fname",fname)
-      data.append("lname",lname)
-      data.append("status",status)
-      data.append("mobile",mobile)
-      data.append("location",location)
-      data.append("gender",gender)
-      data.append("email",email)
-      data.append("user_profile",image)
+      data.append("fname", fname)
+      data.append("lname", lname)
+      data.append("status", status)
+      data.append("mobile", mobile)
+      data.append("location", location)
+      data.append("gender", gender)
+      data.append("email", email)
+      data.append("user_profile", image)
       //api
 
-      const result = await addEmployee(data,headerConfig)
-      console.log(result);
+      const result = await addEmployee(data, headerConfig)
+      // console.log(result);
+      if (result.status >= 200 && result.status < 300) {
+        // clear datas from input state
+        setInputs({
+          ...inputs,
+          fname: "",
+          lname: "",
+          email: "",
+          mobile: "",
+          gender: "",
+          status: "",
+          location: ""
+        })
+        // reset image state
+        setImage("")
+        // console.log(result);
+
+        
+        //update context
+        setRegisterUpdate(result.data)
+        console.log(registerUpdate);
+        //redirect to list of employees page
+        navigate('/emp')
+      }
+      else {
+        setErrorMsg(result.response.data)
+
+      }
+      // console.log(errorMsg);
     }
 
   }
   return (
+
     <div id='home'>
+      {
+        errorMsg ?
+          <Alert className='container w-75 p-3 mt-4' variant={'danger'} dismissible onClose={() => setErrorMsg("")}>
+            {errorMsg}
+          </Alert>
+          : ""
+      }
       <h1 className='d-flex justify-content-center'>Register Employee Details</h1>
       <form class="container p-5 w-75 mt-2 shadow bg-white">
         <div className='p-2 text-center'>
