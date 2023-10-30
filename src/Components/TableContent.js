@@ -1,11 +1,17 @@
 import React from 'react'
 import Table from 'react-bootstrap/Table';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { Button } from 'react-bootstrap';
+import BASE_URL from '../services/base_url';
+import { Link } from 'react-router-dom';
 
-function TableContent() {
+
+function TableContent({empArray}) {
     return (
-        <div >
-            <h1 className='text-center mt-3'>List of employees</h1>
+        <div >{
+            empArray.length>0?
+
+            <div> <h1 className='text-center mt-3'>List of employees</h1>
             <Table className='w-75 container my-5 shadow-lg' striped bordered hover>
                 <thead>
                     <tr>
@@ -19,24 +25,30 @@ function TableContent() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Mark</td>
-                        <td>+919876543210</td>
-                        <td><div className='bg-info text-center rounded'>Active</div></td>
-                        <td className='text-center'><img src="https://i.postimg.cc/nLFGLD9x/ppic.jpg" style={{ width: '50px', height: '60px' }} alt="" /></td>
+                    {
+                        empArray.map((i,index)=>
+                        <tr>
+                        <td>{index+1}</td>
+                        <td>{i.fname+" "+i.lname}</td>
+                        <td>{i.mobile}</td>
+                        <td className='text-center'><Button variant={i.status=="active"?"info":"warning"} className='text-center rounded'>{i.status}</Button></td>
+                        <td className='text-center'><img src={`${BASE_URL}/uploads/${i.profile}`} style={{ width: '50px', height: '60px' }} alt="" /></td>
                         <td> <Dropdown>
                             <Dropdown.Toggle variant="primary" id="dropdown-basic" className='w-100'>
                             <i class="fa-solid fa-list"></i> 
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
-                                <Dropdown.Item href="#/action-1">View</Dropdown.Item>
-                                <Dropdown.Item href="#/action-2">Edit</Dropdown.Item>
-                                <Dropdown.Item href="#/action-3">Delete</Dropdown.Item>
+                                <Link to={`/view/${i._id}`} style={{textDecoration:'none'}}><Dropdown.Item href='ac1'>View</Dropdown.Item></Link>
+                                <Dropdown.Item href='ac2' >Edit</Dropdown.Item>
+                                <Dropdown.Item href='ac3'>Delete</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown></td>
                     </tr>
+                        )
+                    }
+
+                    
                     {/* <tr>
           <td>2</td>
           <td>Jacob</td>
@@ -49,7 +61,9 @@ function TableContent() {
           <td>@twitter</td>
         </tr> */}
                 </tbody>
-            </Table>
+            </Table></div>: <h1>No employees added</h1>
+
+    }
 
         </div>
     )
