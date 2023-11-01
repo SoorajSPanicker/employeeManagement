@@ -4,6 +4,8 @@ import { getEmployee } from '../services/allApis'
 import { Col, Row } from 'react-bootstrap'
 import BASE_URL from '../services/base_url'
 import ListGroup from 'react-bootstrap/ListGroup';
+import AdminHeader from '../Components/AdminHeader'
+
 
 
 
@@ -26,20 +28,21 @@ function View() {
     console.log(emp);
     return (
         <div>
+            <AdminHeader></AdminHeader>
             <Row>
                 <Col>
                     <h1>{emp.fname + " " + emp.lname}</h1>
                     <img className='w-75 p-5' style={{ height: '600px' }} src={`${BASE_URL}/UPLOADS/${emp.profile}`} alt="" />
                 </Col>
                 <Col>
-                    <ListGroup>
-                        <ListGroup.Item>{emp.fname}</ListGroup.Item>
-                        <ListGroup.Item>{emp.lname}</ListGroup.Item>
-                        <ListGroup.Item>{emp.email}</ListGroup.Item>
-                        <ListGroup.Item>{emp.mobile}</ListGroup.Item>
-                        <ListGroup.Item>{emp.gender}</ListGroup.Item>
-                        <ListGroup.Item>{emp.status}</ListGroup.Item>
-                        <ListGroup.Item>{emp.location}</ListGroup.Item>
+                    <ListGroup className='mt-5 pt-5 pe-5'>
+                        <ListGroup.Item className='mt-2 fs-3'> <b className='me-5'>First Name</b> {emp.fname}</ListGroup.Item>
+                        <ListGroup.Item className='mt-2 fs-3'> <b className='me-5'>Last Name</b> {emp.lname}</ListGroup.Item>
+                        <ListGroup.Item className='mt-2 fs-3'> <b className='me-5'>Email</b> {emp.email}</ListGroup.Item>
+                        <ListGroup.Item className='mt-2 fs-3'> <b className='me-5'>Mobile</b> {emp.mobile}</ListGroup.Item>
+                        <ListGroup.Item className='mt-2 fs-3'> <b className='me-5'>Gender</b> {emp.gender}</ListGroup.Item>
+                        <ListGroup.Item className='mt-2 fs-3'> <b className='me-5'>Status</b> {emp.status}</ListGroup.Item>
+                        <ListGroup.Item className='mt-2 fs-3'> <b className='me-5'>Location</b> {emp.location}</ListGroup.Item>
                     </ListGroup>
                 </Col>
             </Row>

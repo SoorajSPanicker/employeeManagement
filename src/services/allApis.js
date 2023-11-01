@@ -9,9 +9,12 @@ export const adminLoginApi=async(body)=>{
 export const addEmployee=async(body,header)=>{
     return await commonStructure('POST',`${BASE_URL}/admin/add-employee`,body,header)
 }
-export const getAllEmployees=async()=>{
-    return await commonStructure('GET',`${BASE_URL}/admin/get-all-employees`,{})
+export const getAllEmployees=async(sdata)=>{
+    return await commonStructure('GET',`${BASE_URL}/admin/get-all-employees?search=${sdata}`,{})
 }
 export const getEmployee=async(id)=>{
     return await commonStructure('GET',`${BASE_URL}/admin/get-employee/${id}`,{})
+}
+export const deleteEmployee=async(id)=>{
+    return await commonStructure('DELETE',`${BASE_URL}/admin/remove-employee/${id}`,{})
 }

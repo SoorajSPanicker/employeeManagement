@@ -6,7 +6,7 @@ import BASE_URL from '../services/base_url';
 import { Link } from 'react-router-dom';
 
 
-function TableContent({empArray}) {
+function TableContent({empArray,deleteEmp}) {
     return (
         <div >{
             empArray.length>0?
@@ -40,8 +40,8 @@ function TableContent({empArray}) {
 
                             <Dropdown.Menu>
                                 <Link to={`/view/${i._id}`} style={{textDecoration:'none'}}><Dropdown.Item href='ac1'>View</Dropdown.Item></Link>
-                                <Dropdown.Item href='ac2' >Edit</Dropdown.Item>
-                                <Dropdown.Item href='ac3'>Delete</Dropdown.Item>
+                                <Link to={`/edit/${i._id}`} style={{textDecoration:'none'}}><Dropdown.Item href='ac2' >Edit</Dropdown.Item></Link>
+                                <Dropdown.Item onClick={()=>deleteEmp(i._id)}>Delete</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown></td>
                     </tr>

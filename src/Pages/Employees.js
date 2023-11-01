@@ -4,25 +4,39 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import { registerContext } from '../Components/ContextShare';
 import Alert from 'react-bootstrap/Alert';
-import { getAllEmployees } from '../services/allApis';
+import { deleteEmployee, getAllEmployees } from '../services/allApis';
+import AdminHeader from '../Components/AdminHeader';
+
 
 
 
 function Employees() {
   const { registerUpdate, setRegisterUpdate } = useContext(registerContext)
   const [employees, setEmployees] = useState([])
+  const [searchData,setSearchData]=useState("")
   const getEmployees = async () => {
-    const result = await getAllEmployees()
+    const result = await getAllEmployees(searchData)
     // console.log(result);
     setEmployees(result.data);
   }
+
+//delete Function
+const removeEmployee=async(id)=>{
+  const result= await deleteEmployee(id)
+  if(result.status>=200 && result.status<300){
+    getEmployees()
+  }
+}
+
   useEffect(() => {
     getEmployees()
-  }, [])
-  console.log(employees);
+  }, [searchData])
+  // console.log(employees);
+  console.log(searchData);
   return (
 
     <div >
+      <AdminHeader></AdminHeader>
 
       {registerUpdate ?
         <Alert className='w-50 container p-3 my-5' variant={"success"} dismissible onClose={() => setRegisterUpdate("")}>
@@ -35,10 +49,10 @@ function Employees() {
           label="search employee"
           className="mb-3 border shadow "
         >
-          <Form.Control type="text" placeholder="Employee name" />
+          <Form.Control onChange={(e)=>setSearchData(e.target.value)} type="text" placeholder="Employee name" />
         </FloatingLabel>
       </div>
-      <TableContent empArray={employees}></TableContent>
+      <TableContent empArray={employees} deleteEmp={removeEmployee}></TableContent>
 
     </div>
   )

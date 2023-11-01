@@ -6,11 +6,14 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import './Home.css'
 import { Link } from 'react-router-dom';
+import AdminHeader from '../Components/AdminHeader';
+
 
 
 function AdminHome() {
   return (
     <div >
+      <AdminHeader></AdminHeader>
 
       <Row id='home'>
         <Col className='ps-3'>

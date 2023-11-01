@@ -9,6 +9,7 @@ import Add from './Pages/Add';
 import Employees from './Pages/Employees';
 import Pnf from './Pages/Pnf';
 import View from './Pages/View';
+import Edit from './Pages/Edit';
 
 
 
@@ -26,6 +27,7 @@ function App() {
         <Route path='/emp' element={<Employees></Employees>}></Route>
         <Route path='*' element={<Pnf></Pnf>}></Route>
         <Route path='/view/:id' element={<View></View>}></Route>
+        <Route path='/edit/:id' element={<Edit></Edit>}></Route>
 
       </Routes>
       <Footer></Footer>

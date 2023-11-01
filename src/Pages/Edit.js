@@ -1,18 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addEmployee } from '../services/allApis';
 import { useNavigate } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
-import { registerContext } from '../Components/ContextShare';
+
 import AdminHeader from '../Components/AdminHeader';
-
-
-function Add() {
-
-  // access context
-  const { registerUpdate, setRegisterUpdate } = useContext(registerContext)
-  // console.log(registerUpdate);
+function Edit() {
   //state for validations
   const [fnameValid, setfnameValid] = useState(true)
   const [emailValid, setEmailValid] = useState(true)
@@ -182,9 +176,9 @@ function Add() {
         // console.log(result);
 
         
-        //update context
-        setRegisterUpdate(result.data)
-        console.log(registerUpdate);
+        // //update context
+        // setRegisterUpdate(result.data)
+        // console.log(registerUpdate);
         //redirect to list of employees page
         navigate('/emp')
       }
@@ -197,7 +191,6 @@ function Add() {
 
   }
   return (
-
     <div id='home'>
       <AdminHeader></AdminHeader>
       {
@@ -271,4 +264,4 @@ function Add() {
   )
 }
 
-export default Add
+export default Edit
