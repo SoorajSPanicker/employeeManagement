@@ -18,3 +18,9 @@ export const getEmployee=async(id)=>{
 export const deleteEmployee=async(id)=>{
     return await commonStructure('DELETE',`${BASE_URL}/admin/remove-employee/${id}`,{})
 }
+export const updateEmployee=async(id,body,headers)=>{
+    return await commonStructure('PUT',`${BASE_URL}/admin/update-employee/${id}`,body,headers)
+}
+export const filterStatus=async(data)=>{
+    return await commonStructure(`GET`,`${BASE_URL}/admin/filter?filterData=${data}`,{})
+}

@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { addEmployee } from '../services/allApis';
-import { useNavigate } from 'react-router-dom';
+import { getEmployee, updateEmployee } from '../services/allApis';
+import { useNavigate, useParams } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 
+
 import AdminHeader from '../Components/AdminHeader';
+import BASE_URL from '../services/base_url';
+import { updateContext } from '../Components/ContextShare';
 function Edit() {
   //state for validations
   const [fnameValid, setfnameValid] = useState(true)
@@ -17,9 +20,9 @@ function Edit() {
 
   const navigate = useNavigate()
   //state to hold error message from backend
-  const [errorMsg, setErrorMsg] = useState("")
+  // const [errorMsg, setErrorMsg] = useState("")
 
-
+const{setUpdateStatus}=useContext(updateContext)
   // state to hold form inputs
   const [inputs, setInputs] = useState({
     fname: "",
@@ -31,18 +34,23 @@ function Edit() {
     location: ""
   })
 
+  const {id}=useParams()
+
+// function to get data of particular employee
+const getEmployeeData=async()=>{
+  const result=await getEmployee(id)
+  setInputs(result.data);
+}
+useEffect(()=>{
+  getEmployeeData()
+},[])
+
+
+console.log(inputs);
+
   const setData = (e) => {
     const { value, name } = e.target
-    if (name == 'fname') {
-      if (value.match(/^[a-zA-Z ]+$/)) {
-        setfnameValid(true)
-        setInputs({ ...inputs, [name]: value })
-      }
-      else {
-        setfnameValid(false)
-      }
-
-    }
+    
     if (name == 'email') {
       if (value.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
         setEmailValid(true)
@@ -53,9 +61,19 @@ function Edit() {
       }
 
     }
+    if (name == 'fname') {
+      if (value.match(/^[a-zA-Z ]*$/)) {
+        setfnameValid(true)
+        setInputs({ ...inputs, [name]: value })
+      }
+      else {
+        setfnameValid(false)
+      }
+
+    }
 
     if (name == 'lname') {
-      if (value.match(/^[a-zA-Z ]+$/)) {
+      if (value.match(/^[a-zA-Z ]*$/)) {
         setlnameValid(true)
         setInputs({ ...inputs, [name]: value })
       }
@@ -77,7 +95,7 @@ function Edit() {
     }
 
     if (name == 'location') {
-      if (value.match(/^[a-zA-Z0-9 ]+$/)) {
+      if (value.match(/^[a-zA-Z0-9 ]*$/)) {
         setlocationValid(true)
         setInputs({ ...inputs, [name]: value })
       }
@@ -108,8 +126,8 @@ function Edit() {
 
     }
   }, [image])
-  // console.log(inputs);
-  const HandleAdd = async (e) => {
+  console.log(inputs);
+  const HandleEdit = async (e) => {
     e.preventDefault()
     // alert('button clicked')
     const { fname, lname, gender, status, email, location, mobile } = inputs
@@ -135,9 +153,9 @@ function Edit() {
     else if (mobile == "") {
       toast.error('please enter mobile')
     }
-    else if (image == "") {
-      toast.error('please choose image file')
-    }
+    // else if (image == "") {
+    //   toast.error('please choose image file')
+    // }
     else {
       // toast.success('all set')
       //header(the body data contain file type content)
@@ -147,6 +165,7 @@ function Edit() {
       //body data as formData because it contain file type content
       const data = new FormData()
       //append  fname, lname, status, mobile, location, gender, email, profile
+      data.append("user_profile", image?image:inputs.profile)
       data.append("fname", fname)
       data.append("lname", lname)
       data.append("status", status)
@@ -154,25 +173,14 @@ function Edit() {
       data.append("location", location)
       data.append("gender", gender)
       data.append("email", email)
-      data.append("user_profile", image)
+      
       //api
 
-      const result = await addEmployee(data, headerConfig)
+      const result = await updateEmployee(id,data, headerConfig)
       // console.log(result);
       if (result.status >= 200 && result.status < 300) {
-        // clear datas from input state
-        setInputs({
-          ...inputs,
-          fname: "",
-          lname: "",
-          email: "",
-          mobile: "",
-          gender: "",
-          status: "",
-          location: ""
-        })
-        // reset image state
-        setImage("")
+      setUpdateStatus(result.data)
+        
         // console.log(result);
 
         
@@ -182,45 +190,43 @@ function Edit() {
         //redirect to list of employees page
         navigate('/emp')
       }
-      else {
-        setErrorMsg(result.response.data)
+      // else {
+      //   setErrorMsg(result.response.data)
 
-      }
+      // }
       // console.log(errorMsg);
     }
 
   }
+ 
   return (
     <div id='home'>
       <AdminHeader></AdminHeader>
-      {
-        errorMsg ?
-          <Alert className='container w-75 p-3 mt-4' variant={'danger'} dismissible onClose={() => setErrorMsg("")}>
-            {errorMsg}
-          </Alert>
-          : ""
-      }
-      <h1 className='d-flex justify-content-center'>Register Employee Details</h1>
+      
+      <h1 className='d-flex justify-content-center'>Edit Employee Details</h1>
+      
+     
+    
       <form class="container p-5 w-75 mt-2 shadow bg-white">
         <div className='p-2 text-center'>
-          <img className='rounded-circle' style={{ height: '140px', width: '15%' }} src={imgPreview ? imgPreview : "https://i.postimg.cc/nLFGLD9x/ppic.jpg"} alt="" />
+          <img className='rounded-circle' style={{ height: '140px', width: '15%' }} src={imgPreview ? imgPreview :`${BASE_URL}/UPLOADS/${inputs.profile}`} alt="" />
         </div>
         <div className='row'>
           <div className='col-6'>
             <label for="exampleFormControlInput1" class="form-label mt-3">First Name</label>
-            <input onChange={(e) => setData(e)} name='fname' required type="text" class="form-control" id="exampleFormControlInput1" />
+            <input value={inputs.fname} onChange={(e) => setData(e)} name='fname' required type="text" class="form-control" id="exampleFormControlInput1" />
             {!fnameValid &&
               <div ><p className='text-danger'>*Include characters only</p></div>}
             <label for="exampleFormControlInput2" class="form-label mt-3">Email</label>
-            <input onChange={(e) => setData(e)} name='email' required type="email" class="form-control" id="exampleFormControlInput2" placeholder="name@example.com" />
+            <input value={inputs.email} onChange={(e) => setData(e)} name='email' required type="email" class="form-control" id="exampleFormControlInput2" placeholder="name@example.com" />
             {!emailValid &&
               <div ><p className='text-danger'>*Invalid Email !</p></div>}
             <label for="exampleFormControlInput3" class="mt-4">gender</label> <br />
             <div className='ms-3' htmlFor="">
-              <input type="radio" onChange={(e) => setData(e)} name='gender' value={'male'} id='m' /><label class="form-check-label" for="m">
+              <input checked={inputs.gender=='male'?true:false} type="radio" onChange={(e) => setData(e)} name='gender' value={'male'} id='m' /><label class="form-check-label" for="m">
                 Male
               </label>
-              <input type="radio" onChange={(e) => setData(e)} name='gender' value={'female'} id='f' /><label class="form-check-label" for="f">
+              <input checked={inputs.gender=='female'?true:false} type="radio" onChange={(e) => setData(e)} name='gender' value={'female'} id='f' /><label class="form-check-label" for="f">
                 Female
               </label>
             </div>
@@ -230,22 +236,22 @@ function Edit() {
           </div>
           <div className='col-6'>
             <label for="exampleFormControlInput7" class="form-label mt-3">Last Name</label>
-            <input onChange={(e) => setData(e)} name='lname' required type="text" class="form-control" id="exampleFormControlInput7" />
+            <input value={inputs.lname} onChange={(e) => setData(e)} name='lname' required type="text" class="form-control" id="exampleFormControlInput7" />
             {!lnameValid &&
               <div ><p className='text-danger'>*Include characters only</p></div>}
             <label for="exampleFormControlInput8" class="form-label mt-3">Mobile</label>
-            <input onChange={(e) => setData(e)} name='mobile' required type="text" class="form-control" id="exampleFormControlInput8" />
+            <input value={inputs.mobile} onChange={(e) => setData(e)} name='mobile' required type="text" class="form-control" id="exampleFormControlInput8" />
             {!mobileValid &&
               <div ><p className='text-danger'>*Include min 10 and max 13 digits</p></div>}
             <label for="example1" class="dropdown form-label mt-4">Employee Status</label>
-            <select onChange={(e) => setData(e)} name='status' class="form-select" aria-label="Default select example">
+            <select value={inputs.status} onChange={(e) => setData(e)} name='status' class="form-select" aria-label="Default select example">
               <option class="dropdown-item disabled" aria-disabled="true">Select</option>
               <option class="dropdown-item" value={'active'}>Active</option>
               <option class="dropdown-item" value={'inactive'}>Inactive</option>
               {/* <option value="3">Three</option> */}
             </select> <br />
             <label for="example2" class="form-label mt-1">Location</label>
-            <input onChange={(e) => setData(e)} name='location' required type="text" class="form-control" id="example2" />
+            <input value={inputs.location} onChange={(e) => setData(e)} name='location' required type="text" class="form-control" id="example2" />
             {!locationValid &&
               <div ><p className='text-danger'>*Include characters and numbers only</p></div>}
 
@@ -254,7 +260,7 @@ function Edit() {
 
         </div>
         <div className='text-center mt-5'>
-          <button onClick={(e) => HandleAdd(e)} style={{ backgroundColor: '#2d0d80', color: 'white' }} type='submit' class="btn btn-primary w-50" >Submit</button> <br />
+          <button onClick={(e) => HandleEdit(e)} style={{ backgroundColor: '#2d0d80', color: 'white' }} type='submit' class="btn btn-primary w-50" >Update</button> <br />
           <button style={{ backgroundColor: '#2d0d80', color: 'white' }} type='submit' class="btn btn-primary w-20 mt-4" >Go to home</button>
 
         </div>
